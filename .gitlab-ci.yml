@@ -1,0 +1,115 @@
+image: amazonlinux
+
+stages:
+  - terraform_apply
+  - terraform_destroy
+
+variables:
+  TF_VERSION: "1.5.0"
+  TF_IN_AUTOMATION: "true"
+  AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID_STAGING
+  AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY_STAGING
+  AWS_DEFAULT_REGION: "ap-south-1"  # Adjust this to your preferred region
+
+
+
+
+
+before_script:
+  
+  - yum install -y yum-utils shadow-utils unzip
+  - yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
+  - yum -y install packer terraform
+  - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+  - unzip awscliv2.zip
+  - ./aws/install
+
+   
+  
+
+  # Configure AWS CLI based on the branch
+  - |
+    if [[ "$CI_COMMIT_BRANCH" == "main" ]]; then
+       
+      echo "running in branch : $CI_COMMIT_BRANCH"
+      echo "$AWS_ACCESS_KEY_ID_PROD" 
+      aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_PROD
+      aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY_PROD
+      aws sts get-caller-identity 
+
+
+    elif [[ "$CI_COMMIT_BRANCH" == "Staging" ]]; then
+       
+      echo "running in branch : $CI_COMMIT_BRANCH"
+      echo "$AWS_ACCESS_KEY_ID_STAGING" 
+      aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_STAGING
+      aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY_STAGING
+      aws sts get-caller-identity 
+
+    else
+      echo "No valid AWS credentials found for the branch: $CI_COMMIT_BRANCH"
+      
+      exit 1
+    fi
+
+  
+
+
+
+ # Define a job to deploy Terraform configurations in the `region1` directory
+deploy_region1:
+  stage: terraform_apply
+  script:
+    - cd aws_petclinic_region1
+    - aws configure set region ap-south-1
+    - terraform init
+    - terraform plan -out=tfplan
+    - terraform apply -auto-approve tfplan
+  when: manual  
+  only:
+    - main
+    - Staging
+
+# Define a job to deploy Terraform configurations in the `region2` directory
+deploy_region2:
+  stage: terraform_apply
+  script:
+    - cd aws_petclinic_region2
+    - aws configure set region ap-southeast-1
+    - terraform init
+    - terraform plan -out=tfplan
+    - terraform apply -auto-approve tfplan
+  when: manual   
+  only:
+    - main
+    - Staging
+
+
+
+# Define a job to manually destroy Terraform configurations in the `region1` directory
+destroy_region1:
+  stage: terraform_destroy
+  script:
+    - cd aws_region1
+    - aws configure set region ap-south-1
+    - terraform init
+    - terraform plan -destroy -out=tfplan
+    - terraform destroy -auto-approve
+  when: manual  
+  only:
+    - main
+    - Staging
+
+# Define a job to manually destroy Terraform configurations in the `region2` directory
+destroy_region2:
+  stage: terraform_destroy
+  script:
+    - cd aws_region2
+    - aws configure set region ap-southeast-1
+    - terraform init
+    - terraform plan -destroy -out=tfplan
+    - terraform destroy -auto-approve
+  when: manual   
+  only:
+    - main
+    - Staging
