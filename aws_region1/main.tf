@@ -220,7 +220,7 @@ resource "aws_route_table_association" "private_rta2" {
 
 resource "aws_subnet" "secure_subnet_az1" {
   vpc_id                   = aws_vpc.myvpc.id
-  cidr_block               = "10.0.2.0/24"
+  cidr_block               = "10.0.10.0/24"
   availability_zone        = "ap-south-1a"
   map_public_ip_on_launch  = false
 
@@ -232,7 +232,7 @@ resource "aws_subnet" "secure_subnet_az1" {
 # create secure subnet az2
 resource "aws_subnet" "secure_subnet_az2" {
   vpc_id                   = aws_vpc.myvpc.id
-  cidr_block               = "10.0.3.0/24"
+  cidr_block               = "10.0.11.0/24"
   availability_zone        = "ap-south-1b"
   map_public_ip_on_launch  = false
 
