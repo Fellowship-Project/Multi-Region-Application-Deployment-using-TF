@@ -1,15 +1,15 @@
 data "aws_ami" "amazon_linux_2" {
   most_recent = true
-  owners      = ["442426868940"]  # The AWS account ID that owns the AMI
+  owners      = ["746669221855"]  # The AWS account ID that owns the AMI
 
   filter {
     name   = "name"
-    values = ["ami-version-1.0.1-1730552775"]  # The exact AMI name
+    values = ["ami-version-1.0.1-1739773564"]  # The exact AMI name
   }
 
   filter {
     name   = "image-id"
-    values = ["ami-0381f3fed8c1e3b6e"]  # The exact AMI ID
+    values = ["ami-04d1fdf970c3124a2"]  # The exact AMI ID
   }
 
   filter {
@@ -47,6 +47,11 @@ resource "aws_iam_role_policy_attachment" "s3_access" {
 
 resource "aws_iam_role_policy_attachment" "ec2_full_access" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
+  role       = aws_iam_role.example.name
+}
+
+resource "aws_iam_role_policy_attachment" "auto_scaling_full_access" {
+  policy_arn = "arn:aws:iam::aws:policy/AutoScalingFullAccess"
   role       = aws_iam_role.example.name
 }
 
