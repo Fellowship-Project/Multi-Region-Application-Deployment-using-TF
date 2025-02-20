@@ -13,7 +13,7 @@ resource "aws_lb" "application_load_balancer" {
 
 # create target group
 resource "aws_lb_target_group" "alb_target_group" {
-  name        = "target_group_region1"
+  name        = "target-group-region1"
   target_type = "instance"
   port        = 8080
   protocol    = "HTTP"
