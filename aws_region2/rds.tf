@@ -67,7 +67,7 @@ resource "aws_db_parameter_group" "log_db_parameter" {
 # Create the RDS instance
 resource "aws_db_instance" "db_instance" {
   engine                = "postgres"
-  engine_version        = "16.1"
+  engine_version        = "16.3"
   multi_az              = true
   parameter_group_name    = aws_db_parameter_group.log_db_parameter.name
   identifier            = "openproject-region2"
