@@ -29,7 +29,7 @@ resource "aws_lb_listener" "alb_http_listener_80" {
 
 # Create target group with port 8080
 resource "aws_lb_target_group" "alb_target_group" {
-  name        = "target_group_region2"
+  name        = "target-group-region2"
   target_type = "instance"
   port        = 8080
   protocol    = "HTTP"
