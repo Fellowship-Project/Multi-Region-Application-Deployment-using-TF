@@ -4,9 +4,21 @@ on:
     branches:
       - main
       - Staging
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Select deploy and destroy action'
+        required: true
+        type: choice
+        options:
+          - deploy-region1
+          - deploy-region2
+          - destroy-region1
+          - destroy-region2
 
 jobs:
   deploy-region1:
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'deploy-region1'
     runs-on: ubuntu-latest
     environment:
       name: ${{ github.ref == 'refs/heads/main' && 'Production' || 'Staging' }}
@@ -37,6 +49,7 @@ jobs:
           terraform apply -auto-approve
 
   deploy-region2:
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'deploy-region2'
     runs-on: ubuntu-latest
     environment:
       name: ${{ github.ref == 'refs/heads/main' && 'Production' || 'Staging' }}
@@ -67,7 +80,7 @@ jobs:
           terraform apply -auto-approve
 
   destroy-region1:
-    needs: [deploy-region1]  # Wait for region1 deployment to complete
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'destroy-region1'
     runs-on: ubuntu-latest
     environment:
       name: ${{ github.ref == 'refs/heads/main' && 'Production' || 'Staging' }}
@@ -98,7 +111,7 @@ jobs:
           terraform destroy -auto-approve
 
   destroy-region2:
-    needs: [deploy-region2]  # Wait for region2 deployment to complete
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'destroy-region2'
     runs-on: ubuntu-latest
     environment:
       name: ${{ github.ref == 'refs/heads/main' && 'Production' || 'Staging' }}
@@ -127,5 +140,3 @@ jobs:
           terraform init
           terraform plan -destroy -out=tfplan
           terraform destroy -auto-approve
-
-          
