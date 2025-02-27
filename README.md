@@ -32,6 +32,8 @@ The project manages infrastructure in two AWS regions:
 2. GitHub Account
 3. Terraform installed locally (for manual operations)
 4. Appropriate AWS credentials with necessary permissions for both Production and Staging accounts
+5. multiple AMI'S for multiple regions (Most imp)
+6. multiple remote backends (s3+ dynamodb ) (Most Imp)
 
 ## Environment Setup ( Required Secrets )
 
