@@ -83,7 +83,7 @@ resource "aws_launch_template" "ec2_asg" {
   iam_instance_profile {
     name = "ag_iam_region1"
   }
-  user_data = base64encode(templatefile("userdata.sh", { postgress_url = aws_db_instance.db_instance.endpoint }))
+  user_data = base64encode(templatefile("userdata.sh", { postgress_url = aws_rds_global_cluster.aurora_global.endpoint }))
   vpc_security_group_ids = [aws_security_group.alb_security_group.id]
   lifecycle {
     create_before_destroy = true
