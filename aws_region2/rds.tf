@@ -1,6 +1,6 @@
 # Create security group for the database
 resource "aws_security_group" "database_security_group" {
-  name        = "database-security-group-region1"
+  name        = "database-security-group-region2"
   description = "Enable PostgreSQL/Aurora access on port 5432"
   vpc_id      = aws_vpc.myvpc.id  # Replace with your VPC ID
   
@@ -20,24 +20,24 @@ resource "aws_security_group" "database_security_group" {
   }
   
   tags = {
-    Name = "database-security-group-region1"
+    Name = "database-security-group-region2"
   }
 }
 
 # Create the subnet group for the Aurora cluster
 resource "aws_db_subnet_group" "database_subnet_group" {
-  name        = "db-secure-subnets-region1"
+  name        = "db-secure-subnets-region2"
   subnet_ids  = [aws_subnet.secure_subnet_az1.id, aws_subnet.secure_subnet_az2.id]  # Replace with your secure subnet IDs
   description = "Aurora cluster in secure subnet"
   
   tags = {
-    Name = "db-secure-subnets-region1"
+    Name = "db-secure-subnets-region2"
   }
 }
 
 # Create parameter group for Aurora PostgreSQL
 resource "aws_rds_cluster_parameter_group" "aurora_cluster_parameter_group" {
-  name        = "aurora-pg16-cluster-params-region1"
+  name        = "aurora-pg16-cluster-params-region2"
   family      = "aurora-postgresql16"
   description = "Aurora PostgreSQL cluster parameter group"
   
@@ -47,13 +47,13 @@ resource "aws_rds_cluster_parameter_group" "aurora_cluster_parameter_group" {
   }
   
   tags = {
-    Name = "aurora-pg16-cluster-params-region1"
-    env  = "logs-region1"
+    Name = "aurora-pg16-cluster-params-region2"
+    env  = "logs-region2"
   }
 }
 
 resource "aws_db_parameter_group" "aurora_db_parameter_group" {
-  name        = "aurora-pg16-instance-params-region1"
+  name        = "aurora-pg16-instance-params-region2"
   family      = "aurora-postgresql16"
   description = "Aurora PostgreSQL instance parameter group"
   
@@ -63,14 +63,14 @@ resource "aws_db_parameter_group" "aurora_db_parameter_group" {
   }
   
   tags = {
-    Name = "aurora-pg16-instance-params-region1"
+    Name = "aurora-pg16-instance-params-region2"
     env  = "logs-region1"
   }
 }
 
 # Create the Aurora PostgreSQL cluster
 resource "aws_rds_cluster" "aurora_cluster" {
-  cluster_identifier      = "openproject-aurora-region1"
+  cluster_identifier      = "openproject-aurora-region2"
   engine                  = "aurora-postgresql"
   engine_version          = "16.3"
   database_name           = "openproject"
@@ -89,13 +89,13 @@ resource "aws_rds_cluster" "aurora_cluster" {
   }
   
   tags = {
-    Name = "openproject-aurora-region1"
+    Name = "openproject-aurora-region2"
   }
 }
 
 # Create the Aurora primary instance
 resource "aws_rds_cluster_instance" "aurora_primary" {
-  identifier           = "openproject-aurora-primary-region1"
+  identifier           = "openproject-aurora-primary-region2"
   cluster_identifier   = aws_rds_cluster.aurora_cluster.id
   instance_class       = "db.t3.medium"
   engine               = "aurora-postgresql"
@@ -105,13 +105,13 @@ resource "aws_rds_cluster_instance" "aurora_primary" {
   publicly_accessible  = false  # Set to false for security
   
   tags = {
-    Name = "openproject-aurora-primary-region1"
+    Name = "openproject-aurora-primary-region2"
   }
 }
 
 # Create the Aurora read replica
 resource "aws_rds_cluster_instance" "aurora_replica" {
-  identifier           = "openproject-aurora-replica-region1"
+  identifier           = "openproject-aurora-replica-region2"
   cluster_identifier   = aws_rds_cluster.aurora_cluster.id
   instance_class       = "db.t3.medium"
   engine               = "aurora-postgresql"
@@ -121,7 +121,7 @@ resource "aws_rds_cluster_instance" "aurora_replica" {
   publicly_accessible  = false  # Set to false for security
   
   tags = {
-    Name = "openproject-aurora-replica-region1"
+    Name = "openproject-aurora-replica-region2"
   }
 }
 
